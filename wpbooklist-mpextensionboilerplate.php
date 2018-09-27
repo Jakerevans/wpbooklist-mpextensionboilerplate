@@ -17,6 +17,33 @@
  * Author URI: https://www.jakerevans.com
  */
 
+/*
+ * SETUP NOTES:
+ *
+ * Modify all File Names
+ *
+ * Modify Plugin Name
+ *
+ * Modify Description
+ *
+ * Modify Version Number in Block comment and in Constant
+ *
+ * Find & Replace these 3 strings:
+ * mpextensionboilerplate
+ * MpExtensionBoilerplate
+ * MPEXTENSIONBOILERPLATE
+ *
+ * Install Gulp & all Plugins listed in gulpfile.js
+ *
+ *
+ *
+ *
+ *
+ */
+
+
+
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -31,7 +58,7 @@ global $wpdb;
 
 /* CONSTANT DEFINITIONS */
 
-	// Root plugin folder directory.
+	// Extension version number.
 	define( 'MPEXTENSIONBOILERPLATE_VERSION_NUM', '6.0.0' );
 
 	// Root plugin folder directory.
@@ -144,6 +171,10 @@ global $wpdb;
 
 	// Creates tables upon activation.
 	register_activation_hook( __FILE__, array( $mpextensionboilerplate_general_functions, 'wpbooklist_mpextensionboilerplate_create_tables' ) );
+
+	// Runs once upon extension activation and adds it's version number to the 'extensionversions' column in the 'wpbooklist_jre_user_options' table of the core plugin.
+	register_activation_hook( __FILE__, array( $mpextensionboilerplate_general_functions, 'wpbooklist_mpextensionboilerplate_record_extension_version' ) );
+
 
 
 /* END OF FUNCTIONS FOUND IN CLASS-WPBOOKLIST-GENERAL-FUNCTIONS.PHP THAT APPLY PLUGIN-WIDE */

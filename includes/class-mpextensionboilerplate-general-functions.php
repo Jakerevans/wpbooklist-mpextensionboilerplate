@@ -49,20 +49,51 @@ if ( ! class_exists( 'MpExtensionBoilerplate_General_Functions', false ) ) :
 		}
 
 		/**
+		 *  Runs once upon extension activation and adds it's version number to the 'extensionversions' column in the 'wpbooklist_jre_user_options' table of the core plugin.
+		 */
+		public function wpbooklist_mpextensionboilerplate_record_extension_version() {
+			global $wpdb;
+			$existing_string = $wpdb->get_row( 'SELECT * from ' . $wpdb->prefix . 'wpbooklist_jre_user_options' );
+
+			// Check to see if Extension is already registered.
+			if ( false !== strpos( $existing_string->extensionversions, 'mpextensionboilerplate' ) ) {
+				$split_string = explode( 'mpextensionboilerplate', $existing_string->extensionversions );
+				$first_part   = $split_string[0];
+				$last_part    = substr( $split_string[1], 5 );
+				$new_string   = $first_part . 'mpextensionboilerplate' . MPEXTENSIONBOILERPLATE_VERSION_NUM . $last_part;
+			} else {
+				$new_string = $existing_string->extensionversions . 'mpextensionboilerplate' . MPEXTENSIONBOILERPLATE_VERSION_NUM;
+			}
+
+			$data         = array(
+				'extensionversions' => $new_string,
+			);
+			$format       = array( '%s' );
+			$where        = array( 'ID' => 1 );
+			$where_format = array( '%d' );
+			$wpdb->update( $wpdb->prefix . 'wpbooklist_jre_user_options', $data, $where, $format, $where_format );
+
+		}
+
+		/**
 		 *  Function to run the compatability code in the Compat class for upgrades/updates, if stored version number doesn't match the defined global in wpbooklist-mpextensionboilerplate.php
 		 */
 		public function wpbooklist_mpextensionboilerplate_update_upgrade_function() {
 
 			// Get current version #.
 			global $wpdb;
-			$table_name = $wpdb->prefix . 'wpbooklist_jre_user_options';
-			$row        = $wpdb->get_row( "SELECT * FROM $table_name" );
-			$version    = $row->version;
+			$existing_string = $wpdb->get_row( 'SELECT * from ' . $wpdb->prefix . 'wpbooklist_jre_user_options' );
 
-			// If version number does not match the current version number found in wpbooklist.php, call the Compat class and run upgrade functions.
-			if ( WPBOOKLIST_VERSION_NUM !== $version ) {
-				require_once CLASS_COMPAT_DIR . 'class-mpextensionboilerplate-compat-functions.php';
-				$compat_class = new WPBookList_Compat_Functions();
+			// Check to see if Extension is already registered and matches this version.
+			if ( false !== strpos( $existing_string->extensionversions, 'mpextensionboilerplate' ) ) {
+				$split_string = explode( 'mpextensionboilerplate', $existing_string->extensionversions );
+				$version      = substr( $split_string[1], 0, 5 );
+
+				// If version number does not match the current version number found in wpbooklist.php, call the Compat class and run upgrade functions.
+				if ( MPEXTENSIONBOILERPLATE_VERSION_NUM !== $version ) {
+					require_once MPEXTENSIONBOILERPLATE_CLASS_COMPAT_DIR . 'class-mpextensionboilerplate-compat-functions.php';
+					$compat_class = new MpExtensionBoilerplate_Compat_Functions();
+				}
 			}
 		}
 
