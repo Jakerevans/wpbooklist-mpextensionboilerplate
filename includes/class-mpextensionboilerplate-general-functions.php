@@ -103,7 +103,7 @@ if ( ! class_exists( 'MpExtensionBoilerplate_General_Functions', false ) ) :
 		 */
 		public function wpbooklist_mpextensionboilerplate_frontend_js() {
 
-			wp_register_script( 'wpbooklist_mpextensionboilerplate_frontendjs', MPEXTENSIONBOILERPLATE_JS_URL . 'wpbooklist_frontend.min.js', array( 'jquery' ), MPEXTENSIONBOILERPLATE_VERSION_NUM, true );
+			wp_register_script( 'wpbooklist_mpextensionboilerplate_frontendjs', MPEXTENSIONBOILERPLATE_JS_URL . 'wpbooklist_mpextensionboilerplate_frontend.min.js', array( 'jquery' ), MPEXTENSIONBOILERPLATE_VERSION_NUM, true );
 
 			// Next 4-5 lines are required to allow translations of strings that would otherwise live in the wpbooklist-admin-js.js JavaScript File.
 			require_once MPEXTENSIONBOILERPLATE_CLASS_TRANSLATIONS_DIR . 'class-wpbooklist-mpextensionboilerplate-translations.php';
@@ -133,7 +133,7 @@ if ( ! class_exists( 'MpExtensionBoilerplate_General_Functions', false ) ) :
 		 */
 		public function wpbooklist_mpextensionboilerplate_admin_style() {
 
-			wp_register_style( 'wpbooklist_mpextensionboilerplate_adminui', MPEXTENSIONBOILERPLATE_CSS_URL . 'wpbooklist-main-admin.css', null, MPEXTENSIONBOILERPLATE_VERSION_NUM );
+			wp_register_style( 'wpbooklist_mpextensionboilerplate_adminui', MPEXTENSIONBOILERPLATE_CSS_URL . 'wpbooklist-mpextensionboilerplate-main-admin.css', null, MPEXTENSIONBOILERPLATE_VERSION_NUM );
 			wp_enqueue_style( 'wpbooklist_mpextensionboilerplate_adminui' );
 
 		}
@@ -143,7 +143,7 @@ if ( ! class_exists( 'MpExtensionBoilerplate_General_Functions', false ) ) :
 		 */
 		public function wpbooklist_mpextensionboilerplate_frontend_style() {
 
-			wp_register_style( 'wpbooklist_mpextensionboilerplate_frontendui', MPEXTENSIONBOILERPLATE_CSS_URL . 'wpbooklist-main-frontend.css', null, MPEXTENSIONBOILERPLATE_VERSION_NUM );
+			wp_register_style( 'wpbooklist_mpextensionboilerplate_frontendui', MPEXTENSIONBOILERPLATE_CSS_URL . 'wpbooklist-mpextensionboilerplate-main-frontend.css', null, MPEXTENSIONBOILERPLATE_VERSION_NUM );
 			wp_enqueue_style( 'wpbooklist_mpextensionboilerplate_frontendui' );
 
 		}
