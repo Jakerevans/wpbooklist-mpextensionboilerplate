@@ -20,7 +20,7 @@
 /*
  * SETUP NOTES:
  *
- * Modify all File Names
+ * Change all filename instances from mpextensionboilerplate to desired plugin name
  *
  * Modify Plugin Name
  *
