@@ -67,6 +67,15 @@ global $wpdb;
 	// Root WordPress Plugin Directory.
 	define( 'MPEXTENSIONBOILERPLATE_ROOT_WP_PLUGINS_DIR', str_replace( '/wpbooklist-mpextensionboilerplate', '', plugin_dir_path( __FILE__ ) ) );
 
+	// Root WPBL Dir.
+	define( 'ROOT_WPBL_DIR', MPEXTENSIONBOILERPLATE_ROOT_WP_PLUGINS_DIR . 'wpbooklist/' );
+
+	// Root WPBL Classes Dir.
+	define( 'ROOT_WPBL_CLASSES_DIR', ROOT_WPBL_DIR . 'includes/classes/' );
+
+	// Root WPBL Transients Dir.
+	define( 'ROOT_WPBL_TRANSIENTS_DIR', ROOT_WPBL_CLASSES_DIR . 'transients/' );
+
 	// Root plugin folder URL .
 	define( 'MPEXTENSIONBOILERPLATE_ROOT_URL', plugins_url() . '/wpbooklist-mpextensionboilerplate/' );
 
