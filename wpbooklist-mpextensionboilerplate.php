@@ -151,6 +151,12 @@ global $wpdb;
 
 /* FUNCTIONS FOUND IN CLASS-WPBOOKLIST-GENERAL-FUNCTIONS.PHP THAT APPLY PLUGIN-WIDE */
 
+	// Displays the 'Enter Your License Key' message at the top of the dashboard if the user hasn't done so already.
+	add_action( 'admin_notices', array( $mpextensionboilerplate_general_functions, 'wpbooklist_mpextensionboilerplate_top_dashboard_license_notification' ) );
+
+	// Function that adds in the License Key Submission form on this Extension's entry on the plugins page.
+	add_action( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $mpextensionboilerplate_general_functions, 'wpbooklist_mpextensionboilerplate_pluginspage_license_entry' ) );
+
 	// Function that loads up the menu page entry for this Extension.
 	add_filter( 'wpbooklist_add_sub_menu', array( $mpextensionboilerplate_general_functions, 'wpbooklist_mpextensionboilerplate_submenu' ) );
 

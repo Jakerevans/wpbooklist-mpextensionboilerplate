@@ -18,6 +18,35 @@ if ( ! class_exists( 'MpExtensionBoilerplate_General_Functions', false ) ) :
 	 */
 	class MpExtensionBoilerplate_General_Functions {
 
+		/**
+		 * Adds in the 'Enter License Key' text input and submit button.
+		 *
+		 * @param  array $links List of existing plugin action links.
+		 * @return array List of modified plugin action links.
+		 */
+		public function wpbooklist_mpextensionboilerplate_pluginspage_license_entry( $links ) {
+
+			global $wpdb;
+
+			require_once MPEXTENSIONBOILERPLATE_CLASS_TRANSLATIONS_DIR . 'class-wpbooklist-mpextensionboilerplate-translations.php';
+			$trans = new WPBookList_MpExtensionBoilerplate_Translations();
+
+			// Get license key from plugin options, if it's already been saved. If it has, don't display anything.
+			$this->extension_settings = $wpdb->get_row( 'SELECT * FROM ' . $wpdb->prefix . 'wpbooklist_mpextensionboilerplate_settings' );
+
+			if ( null === $this->extension_settings->license || '' === $this->extension_settings->license ) {
+
+				$license_html = '<form class="wpbooklist-extension-licence-keyplugins-page-form" id="wpbooklist-extension-licence-keyplugins-page-form-mpextensionboilerplate"><input id="wpbooklist-extension-licence-keyplugins-page-input-mpextensionboilerplate" class="wpbooklist-extension-licence-keyplugins-page-input" type="text" placeholder="' . $trans->trans_1 . '" value="' . $trans->trans_1 . '"></input><button id="wpbooklist-extension-licence-keyplugins-page-button-mpextensionboilerplate" class="wpbooklist-extension-licence-keyplugins-page-button">' . $trans->trans_2 . '</button></form>';
+
+				array_push( $links, $license_html );
+
+				return $links;
+
+			} else {
+				return $links;
+			}
+		}
+
 		/** Functions that loads up the menu page entry for this Extension.
 		 *
 		 *  @param array $submenu_array - The array that contains submenu entries to add to.
@@ -94,6 +123,32 @@ if ( ! class_exists( 'MpExtensionBoilerplate_General_Functions', false ) ) :
 					require_once MPEXTENSIONBOILERPLATE_CLASS_COMPAT_DIR . 'class-mpextensionboilerplate-compat-functions.php';
 					$compat_class = new MpExtensionBoilerplate_Compat_Functions();
 				}
+			}
+		}
+
+		/**
+		 * Displays the 'Enter Your License Key' message at the top of the dashboard if the user hasn't done so already.
+		 */
+		public function wpbooklist_mpextensionboilerplate_top_dashboard_license_notification() {
+
+			global $wpdb;
+
+			// Get license key from plugin options, if it's already been saved. If it has, don't display anything.
+			$this->extension_settings = $wpdb->get_row( 'SELECT * FROM ' . $wpdb->prefix . 'wpbooklist_mpextensionboilerplate_options' );
+
+			if ( null === $this->extension_settings->license || '' === $this->extension_settings->license ) {
+
+				require_once SEARCH_CLASS_TRANSLATIONS_DIR . 'class-wpbooklist-mpextensionboilerplate-translations.php';
+				$trans = new WPBookList_Search_Translations();
+
+				echo '
+				<div class="notice notice-success is-dismissible">
+					<form class="wpbooklist-extension-licence-key-dashboard-form" id="wpbooklist-extension-licence-key-dashboard-form-mpextensionboilerplate">
+						<p class="wpbooklist-extension-licence-key-dashboard-title">' . $trans->trans_3 . '</p>
+						<input id="wpbooklist-extension-licence-key-dashboard-input-mpextensionboilerplate" class="wpbooklist-extension-licence-key-dashboard-input" type="text" placeholder="' . $trans->trans_1 . '" value="' . $trans->trans_1 . '"></input>
+						<button id="wpbooklist-extension-licence-key-dashboard-button-mpextensionboilerplate" class="wpbooklist-extension-licence-key-dashboard-button">' . $trans->trans_4 . '</button>
+					</form>
+				</div>';
 			}
 		}
 
@@ -184,7 +239,7 @@ if ( ! class_exists( 'MpExtensionBoilerplate_General_Functions', false ) ) :
 		 */
 		public function wpbooklist_mpextensionboilerplate_register_table_name() {
 			global $wpdb;
-			//$wpdb->wpbooklist_jre_saved_book_log = "{$wpdb->prefix}wpbooklist_jre_saved_book_log";
+			$wpdb->wpbooklist_mpextensionboilerplate_settings = "{$wpdb->prefix}wpbooklist_mpextensionboilerplate_settings";
 		}
 
 		/**
@@ -204,27 +259,17 @@ if ( ! class_exists( 'MpExtensionBoilerplate_General_Functions', false ) ) :
 			global $wpdb;
 			global $charset_collate;
 
-			/*
 			// Call this manually as we may have missed the init hook.
 			$this->wpbooklist_mpextensionboilerplate_register_table_name();
 
-			$sql_create_table1 = "CREATE TABLE {$wpdb->wpbooklist_mpextensionboilerplate}
+			$sql_create_table1 = "CREATE TABLE {$wpdb->wpbooklist_mpextensionboilerplate_settings}
 			(
 				ID bigint(190) auto_increment,
-				getstories bigint(255),
-				createpost bigint(255),
-				createpage bigint(255),
-				storypersist bigint(255),
-				deletedefault bigint(255),
-				notifydismiss bigint(255) NOT NULL DEFAULT 1,
-				newnotify bigint(255) NOT NULL DEFAULT 1,
-				notifymessage MEDIUMTEXT,
-				storytimestylepak varchar(255) NOT NULL DEFAULT 'default',
+				license varchar(255),
 				PRIMARY KEY  (ID),
-				KEY getstories (getstories)
+				KEY license (license)
 			) $charset_collate; ";
 			dbDelta( $sql_create_table1 );
-			*/
 		}
 
 	}

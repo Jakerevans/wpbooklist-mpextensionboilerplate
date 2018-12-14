@@ -29,7 +29,8 @@ if ( ! class_exists( 'WPBookList_MpExtensionBoilerplate_Translations', false ) )
 		 * All the Translations.
 		 */
 		public function trans_strings() {
-			$this->trans_1 = __( 'Search', 'wpbooklist-textdomain' );
+			$this->trans_1 = __( 'Enter your License Key Here', 'wpbooklist-textdomain' );
+			$this->trans_2 = __( 'Save', 'wpbooklist-textdomain' );
 
 			// The array of translation strings.
 			$translation_array = array(
