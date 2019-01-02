@@ -1,6 +1,6 @@
 <?php
 /**
- * Class MpExtensionBoilerplate_Compat_Functions - class-mpextensionboilerplate-compat-functions.php
+ * Class BulkBookUpload_Compat_Functions - class-bulkbookupload-compat-functions.php
  *
  * @author   Jake Evans
  * @category Admin
@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'MpExtensionBoilerplate_Compat_Functions', false ) ) :
+if ( ! class_exists( 'BulkBookUpload_Compat_Functions', false ) ) :
 	/**
-	 * MpExtensionBoilerplate_Compat_Functions class. Here we'll run functions that make older versions of WPBookList compatible with newest version
+	 * BulkBookUpload_Compat_Functions class. Here we'll run functions that make older versions of WPBookList compatible with newest version
 	 */
-	class MpExtensionBoilerplate_Compat_Functions {
+	class BulkBookUpload_Compat_Functions {
 
 
 		/** Common member variable
@@ -33,20 +33,20 @@ if ( ! class_exists( 'MpExtensionBoilerplate_Compat_Functions', false ) ) :
 			// Rebuild version number string.
 			global $wpdb;
 			$row              = $wpdb->get_row( 'SELECT * FROM ' . $wpdb->prefix . 'wpbooklist_jre_user_options' );
-			$split_string     = explode( 'mpextensionboilerplate', $row->extensionversions );
+			$split_string     = explode( 'bulkbookupload', $row->extensionversions );
 			$first_part       = $split_string[0];
 			$last_part        = substr( $split_string[1], 5 );
-			$this->new_string = $first_part . 'mpextensionboilerplate' . WPBOOKLIST_MPEXTENSIONBOILERPLATE_VERSION_NUM . $last_part;
+			$this->new_string = $first_part . 'bulkbookupload' . WPBOOKLIST_BULKBOOKUPLOAD_VERSION_NUM . $last_part;
 
 			// Now call the function that will update the version number, which will ensure none of these function ever run again until the next update/upgrade.
-			$this->mpextensionboilerplate_update_version_number_function();
+			$this->bulkbookupload_update_version_number_function();
 
 		}
 
 		/**
 		 *  Function to update the version number.
 		 */
-		public function mpextensionboilerplate_update_version_number_function() {
+		public function bulkbookupload_update_version_number_function() {
 
 			global $wpdb;
 			$data         = array(

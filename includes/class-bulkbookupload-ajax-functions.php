@@ -1,6 +1,6 @@
 <?php
 /**
- * Class MpExtensionBoilerplate_Ajax_Functions - class-wpbooklist-ajax-functions.php
+ * Class BulkBookUpload_Ajax_Functions - class-wpbooklist-ajax-functions.php
  *
  * @author   Jake Evans
  * @category Admin
@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'MpExtensionBoilerplate_Ajax_Functions', false ) ) :
+if ( ! class_exists( 'BulkBookUpload_Ajax_Functions', false ) ) :
 	/**
-	 * MpExtensionBoilerplate_Ajax_Functions class. Here we'll do things like enqueue scripts/css, set up menus, etc.
+	 * BulkBookUpload_Ajax_Functions class. Here we'll do things like enqueue scripts/css, set up menus, etc.
 	 */
-	class MpExtensionBoilerplate_Ajax_Functions {
+	class BulkBookUpload_Ajax_Functions {
 
 		/**
 		 * Class Constructor - Simply calls the Translations
@@ -29,26 +29,97 @@ if ( ! class_exists( 'MpExtensionBoilerplate_Ajax_Functions', false ) ) :
 		/**
 		 * Callback function for handling the saving of the user's License Key.
 		 */
-		public function wpbooklist_mpextensionboilerplate_save_license_key_action_callback() {
+		public function wpbooklist_bulkbookupload_save_license_key_action_callback() {
 
 			global $wpdb;
 
-			check_ajax_referer( 'wpbooklist_mpextensionboilerplate_save_license_key_action_callback', 'security' );
+			check_ajax_referer( 'wpbooklist_bulkbookupload_save_license_key_action_callback', 'security' );
 
 			if ( isset( $_POST['license'] ) ) {
 				$license = filter_var( wp_unslash( $_POST['license'] ), FILTER_SANITIZE_STRING );
 			}
 
 			$data         = array(
-				'license' => $license,
+				'fdks' => $license,
 			);
 			$format       = array( '%s' );
 			$where        = array( 'ID' => 1 );
 			$where_format = array( '%d' );
-			$save_result = $wpdb->update( $wpdb->prefix . 'wpbooklist_mpextensionboilerplate_settings', $data, $where, $format, $where_format );
+			$save_result = $wpdb->update( $wpdb->prefix . 'wpbooklist_bulkbookupload_settings', $data, $where, $format, $where_format );
 
 			wp_die( $save_result );
 
+		}
+
+		/**
+		 * Callback function for adding books.
+		 */
+		public function wpbooklist_bulkbookupload_action_callback(){
+			global $wpdb;
+			check_ajax_referer( 'wpbooklist_bulkbookupload_action_callback', 'security' );
+
+			$isbn = '';
+			$amazon_auth_yes = '';
+			$library = '';
+			$page_yes = '';
+			$post_yes = '';
+			$woocommerce = '';
+
+			if(isset($_POST['isbn'])){
+				$isbn = filter_var($_POST['isbn'],FILTER_SANITIZE_STRING);
+			}
+
+			if(isset($_POST['amazonAuthYes'])){
+				$amazon_auth_yes = filter_var($_POST['amazonAuthYes'],FILTER_SANITIZE_STRING);
+			}
+
+			if(isset($_POST['library'])){
+				$library = filter_var($_POST['library'],FILTER_SANITIZE_STRING);
+			}
+
+			if(isset($_POST['createPage'])){
+				$page_yes = filter_var($_POST['createPage'],FILTER_SANITIZE_STRING);
+			}
+
+			if(isset($_POST['createPost'])){
+				$post_yes = filter_var($_POST['createPost'],FILTER_SANITIZE_STRING);
+			}
+
+			if(isset($_POST['woocommerce'])){
+				$woocommerce = filter_var($_POST['woocommerce'],FILTER_SANITIZE_STRING);
+			}
+
+			$book_array = array(
+				'amazonauth' => $amazon_auth_yes,
+				'library' => $library,
+				'use_amazon_yes' => 'true',
+				'isbn' => $isbn,
+				'page_yes' => $page_yes,
+				'post_yes' => $post_yes,
+				'woocommerce' => $woocommerce
+			);
+
+			require_once(CLASS_BOOK_DIR.'class-wpbooklist-book.php');
+			$book_class = new WPBookList_Book('addbulk', $book_array, null);
+			$insert_result = $book_class->add_result;
+
+			// If book added succesfully, get the ID of the book we just inserted, and return the result and that ID
+			if($insert_result == 1){
+				$book_table_name = $wpdb->prefix . 'wpbooklist_jre_user_options';
+		  		$id_result = $wpdb->get_var("SELECT MAX(ID) from $library");
+		  		$row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $library WHERE ID = %d", $id_result));
+
+		  		//error_log(print_r($book_class,true));
+
+
+		  		//echo $book_class->title.'---sep---sep---'.$book_class->isbn;
+
+
+		  		echo $book_class->title.'---sep---sep---'.$book_class->isbn.'---sep---sep---'.$book_class->apireport.'---sep---sep---'.json_encode($book_class->whichapifound).'---sep---sep---'.$book_class->apiamazonfailcount;
+
+
+			}
+			wp_die();
 		}
 
 	}
@@ -58,34 +129,34 @@ endif;
 
 
 
-function wpbooklist_mpextensionboilerplate_settings_action_javascript() { 
+function wpbooklist_bulkbookupload_settings_action_javascript() { 
 	?>
   	<script type="text/javascript" >
   	"use strict";
   	jQuery(document).ready(function($) {
 
-  		$("#wpbooklist-mpextensionboilerplate-img-remove-1").click(function(event){
-  			$('#wpbooklist-mpextensionboilerplate-preview-img-1').attr('src', '<?php echo ROOT_IMG_ICONS_URL ?>'+'book-placeholder.svg');
+  		$("#wpbooklist-bulkbookupload-img-remove-1").click(function(event){
+  			$('#wpbooklist-bulkbookupload-preview-img-1').attr('src', '<?php echo ROOT_IMG_ICONS_URL ?>'+'book-placeholder.svg');
   		});
 
-  		$("#wpbooklist-mpextensionboilerplate-img-remove-2").click(function(event){
-  			$('#wpbooklist-mpextensionboilerplate-preview-img-2').attr('src', '<?php echo ROOT_IMG_ICONS_URL ?>'+'book-placeholder.svg');
+  		$("#wpbooklist-bulkbookupload-img-remove-2").click(function(event){
+  			$('#wpbooklist-bulkbookupload-preview-img-2').attr('src', '<?php echo ROOT_IMG_ICONS_URL ?>'+'book-placeholder.svg');
   		});
 
 
 
-	  	$("#wpbooklist-mpextensionboilerplate-save-settings").click(function(event){
+	  	$("#wpbooklist-bulkbookupload-save-settings").click(function(event){
 
-	  		$('#wpbooklist-mpextensionboilerplate-success-div').html('');
+	  		$('#wpbooklist-bulkbookupload-success-div').html('');
 	  		$('#wpbooklist-spinner-storfront-lib').animate({'opacity':'1'});
 
-	  		var callToAction = $('#wpbooklist-mpextensionboilerplate-call-to-action-input').val();
-	  		var libImg = $('#wpbooklist-mpextensionboilerplate-preview-img-1').attr('src');
-	  		var bookImg = $('#wpbooklist-mpextensionboilerplate-preview-img-2').attr('src');
+	  		var callToAction = $('#wpbooklist-bulkbookupload-call-to-action-input').val();
+	  		var libImg = $('#wpbooklist-bulkbookupload-preview-img-1').attr('src');
+	  		var bookImg = $('#wpbooklist-bulkbookupload-preview-img-2').attr('src');
 
 		  	var data = {
-				'action': 'wpbooklist_mpextensionboilerplate_settings_action',
-				'security': '<?php echo wp_create_nonce( "wpbooklist_mpextensionboilerplate_settings_action_callback" ); ?>',
+				'action': 'wpbooklist_bulkbookupload_settings_action',
+				'security': '<?php echo wp_create_nonce( "wpbooklist_bulkbookupload_settings_action_callback" ); ?>',
 				'calltoaction':callToAction,
 				'libimg':libImg,
 				'bookimg':bookImg			
@@ -100,7 +171,7 @@ function wpbooklist_mpextensionboilerplate_settings_action_javascript() {
 			    success: function(response) {
 
 			    	$('#wpbooklist-spinner-storfront-lib').animate({'opacity':'0'});
-			    	$('#wpbooklist-mpextensionboilerplate-success-div').html('<span id="wpbooklist-add-book-success-span">Success!</span><br/><br/> You\'ve saved your MpExtensionBoilerplate Settings!<div id="wpbooklist-addstylepak-success-thanks">Thanks for using WPBooklist! If you happen to be thrilled with WPBookList, then by all means, <a id="wpbooklist-addbook-success-review-link" href="https://wordpress.org/support/plugin/wpbooklist/reviews/?filter=5">Feel Free to Leave a 5-Star Review Here!</a><img id="wpbooklist-smile-icon-1" src="http://evansclienttest.com/wp-content/plugins/wpbooklist/assets/img/icons/smile.png"></div>')
+			    	$('#wpbooklist-bulkbookupload-success-div').html('<span id="wpbooklist-add-book-success-span">Success!</span><br/><br/> You\'ve saved your BulkBookUpload Settings!<div id="wpbooklist-addstylepak-success-thanks">Thanks for using WPBooklist! If you happen to be thrilled with WPBookList, then by all means, <a id="wpbooklist-addbook-success-review-link" href="https://wordpress.org/support/plugin/wpbooklist/reviews/?filter=5">Feel Free to Leave a 5-Star Review Here!</a><img id="wpbooklist-smile-icon-1" src="http://evansclienttest.com/wp-content/plugins/wpbooklist/assets/img/icons/smile.png"></div>')
 			    	console.log(response);
 			    },
 				error: function(jqXHR, textStatus, errorThrown) {
@@ -118,13 +189,13 @@ function wpbooklist_mpextensionboilerplate_settings_action_javascript() {
 }
 
 
-function wpbooklist_mpextensionboilerplate_settings_action_callback(){
+function wpbooklist_bulkbookupload_settings_action_callback(){
 	global $wpdb;
-	check_ajax_referer( 'wpbooklist_mpextensionboilerplate_settings_action_callback', 'security' );
+	check_ajax_referer( 'wpbooklist_bulkbookupload_settings_action_callback', 'security' );
 	$call_to_action = filter_var($_POST['calltoaction'],FILTER_SANITIZE_STRING);
 	$lib_img = filter_var($_POST['libimg'],FILTER_SANITIZE_URL);
 	$book_img = filter_var($_POST['bookimg'],FILTER_SANITIZE_URL);
-	$table_name = MPEXTENSIONBOILERPLATE_PREFIX.'wpbooklist_jre_mpextensionboilerplate_options';
+	$table_name = BULKBOOKUPLOAD_PREFIX.'wpbooklist_jre_bulkbookupload_options';
 
 	if($lib_img == '' || $lib_img == null || strpos($lib_img, 'placeholder.svg') !== false){
 		$lib_img = 'Purchase Now!';
@@ -149,10 +220,10 @@ function wpbooklist_mpextensionboilerplate_settings_action_callback(){
 }
 
 
-function wpbooklist_mpextensionboilerplate_save_default_action_javascript() { 
+function wpbooklist_bulkbookupload_save_default_action_javascript() { 
 
 	$trans1 = __("Success!", 'wpbooklist');
-	$trans2 = __("You've saved your default MpExtensionBoilerplate WooCommerce Settings!", 'wpbooklist');
+	$trans2 = __("You've saved your default BulkBookUpload WooCommerce Settings!", 'wpbooklist');
 	$trans6 = __("Thanks for using WPBookList, and", 'wpbooklist');
 	$trans7 = __("be sure to check out the WPBookList Extensions!", 'wpbooklist');
 	$trans8 = __("If you happen to be thrilled with WPBookList, then by all means,", 'wpbooklist');
@@ -162,9 +233,9 @@ function wpbooklist_mpextensionboilerplate_save_default_action_javascript() {
   	<script type="text/javascript" >
   	"use strict";
   	jQuery(document).ready(function($) {
-	  	$("#wpbooklist-mpextensionboilerplate-woo-settings-button").click(function(event){
+	  	$("#wpbooklist-bulkbookupload-woo-settings-button").click(function(event){
 
-	  		$('#wpbooklist-mpextensionboilerplate-woo-set-success-div').html('');
+	  		$('#wpbooklist-bulkbookupload-woo-set-success-div').html('');
 	  		$('.wpbooklist-spinner').animate({'opacity':'1'});
 
 	  		var salePrice = $( "input[name='book-woo-sale-price']" ).val();
@@ -188,7 +259,7 @@ function wpbooklist_mpextensionboilerplate_save_default_action_javascript() {
 			var upsellString = '';
 			var crosssellString = '';
 
-			// Making checks to see if MpExtensionBoilerplate extension is active
+			// Making checks to see if BulkBookUpload extension is active
 			if(upsells != undefined){
 				for (var i = 0; i < upsells.length; i++) {
 					upsellString = upsellString+','+upsells[i];
@@ -216,8 +287,8 @@ function wpbooklist_mpextensionboilerplate_save_default_action_javascript() {
 			}
 
 		  	var data = {
-				'action': 'wpbooklist_mpextensionboilerplate_save_action_default',
-				'security': '<?php echo wp_create_nonce( "wpbooklist_mpextensionboilerplate_save_default_action_callback" ); ?>',
+				'action': 'wpbooklist_bulkbookupload_save_action_default',
+				'security': '<?php echo wp_create_nonce( "wpbooklist_bulkbookupload_save_default_action_callback" ); ?>',
 				'saleprice':salePrice,
 				'regularprice':regularPrice,
 				'stock':stock,
@@ -247,12 +318,12 @@ function wpbooklist_mpextensionboilerplate_save_default_action_javascript() {
 			    	console.log(response);
 
 
-			    	$('#wpbooklist-mpextensionboilerplate-woo-set-success-div').html("<span id='wpbooklist-add-book-success-span'><?php echo $trans1 ?></span><br/><br/>&nbsp;<?php echo $trans2 ?><div id='wpbooklist-addtemplate-success-thanks'><?php echo $trans6 ?>&nbsp;<a href='http://wpbooklist.com/index.php/extensions/'><?php echo $trans7 ?></a><br/><br/>&nbsp;<?php echo $trans8 ?> &nbsp;<a id='wpbooklist-addbook-success-review-link' href='https://wordpress.org/support/plugin/wpbooklist/reviews/?filter=5'><?php echo $trans9 ?></a><img id='wpbooklist-smile-icon-1' src='http://evansclienttest.com/wp-content/plugins/wpbooklist/assets/img/icons/smile.png'></div>");
+			    	$('#wpbooklist-bulkbookupload-woo-set-success-div').html("<span id='wpbooklist-add-book-success-span'><?php echo $trans1 ?></span><br/><br/>&nbsp;<?php echo $trans2 ?><div id='wpbooklist-addtemplate-success-thanks'><?php echo $trans6 ?>&nbsp;<a href='http://wpbooklist.com/index.php/extensions/'><?php echo $trans7 ?></a><br/><br/>&nbsp;<?php echo $trans8 ?> &nbsp;<a id='wpbooklist-addbook-success-review-link' href='https://wordpress.org/support/plugin/wpbooklist/reviews/?filter=5'><?php echo $trans9 ?></a><img id='wpbooklist-smile-icon-1' src='http://evansclienttest.com/wp-content/plugins/wpbooklist/assets/img/icons/smile.png'></div>");
 
 			    	$('.wpbooklist-spinner').animate({'opacity':'0'});
 
 			    	$('html, body').animate({
-				        scrollTop: $("#wpbooklist-mpextensionboilerplate-woo-set-success-div").offset().top-100
+				        scrollTop: $("#wpbooklist-bulkbookupload-woo-set-success-div").offset().top-100
 				    }, 1000);
 			    },
 				error: function(jqXHR, textStatus, errorThrown) {
@@ -270,9 +341,9 @@ function wpbooklist_mpextensionboilerplate_save_default_action_javascript() {
 }
 
 // Callback function for creating backups
-function wpbooklist_mpextensionboilerplate_save_default_action_callback(){
+function wpbooklist_bulkbookupload_save_default_action_callback(){
 	global $wpdb;
-	check_ajax_referer( 'wpbooklist_mpextensionboilerplate_save_default_action_callback', 'security' );
+	check_ajax_referer( 'wpbooklist_bulkbookupload_save_default_action_callback', 'security' );
 	$saleprice = filter_var($_POST['saleprice'],FILTER_SANITIZE_STRING);
 	$regularprice = filter_var($_POST['regularprice'],FILTER_SANITIZE_STRING);
 	$stock = filter_var($_POST['stock'],FILTER_SANITIZE_STRING);
@@ -313,7 +384,7 @@ function wpbooklist_mpextensionboilerplate_save_default_action_callback(){
 		'defaultupsell' => $upsells
 	);
 
- 	$table = $wpdb->prefix."wpbooklist_jre_mpextensionboilerplate_options";
+ 	$table = $wpdb->prefix."wpbooklist_jre_bulkbookupload_options";
    	$format = array( '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'); 
     $where = array( 'ID' => 1 );
     $where_format = array( '%d' );
@@ -327,15 +398,15 @@ function wpbooklist_mpextensionboilerplate_save_default_action_callback(){
 }
 
 
-function wpbooklist_mpextensionboilerplate_upcross_pop_action_javascript() { 
+function wpbooklist_bulkbookupload_upcross_pop_action_javascript() { 
 	?>
   	<script type="text/javascript" >
   	"use strict";
   	jQuery(document).ready(function($) {
 
 		  	var data = {
-				'action': 'wpbooklist_mpextensionboilerplate_upcross_pop_action',
-				'security': '<?php echo wp_create_nonce( "wpbooklist_mpextensionboilerplate_upcross_pop_action_callback" ); ?>',
+				'action': 'wpbooklist_bulkbookupload_upcross_pop_action',
+				'security': '<?php echo wp_create_nonce( "wpbooklist_bulkbookupload_upcross_pop_action_callback" ); ?>',
 			};
 
 	     	var request = $.ajax({
@@ -387,12 +458,12 @@ function wpbooklist_mpextensionboilerplate_upcross_pop_action_javascript() {
 }
 
 // Callback function for creating backups
-function wpbooklist_mpextensionboilerplate_upcross_pop_action_callback(){
+function wpbooklist_bulkbookupload_upcross_pop_action_callback(){
 	global $wpdb;
-	check_ajax_referer( 'wpbooklist_mpextensionboilerplate_upcross_pop_action_callback', 'security' );
+	check_ajax_referer( 'wpbooklist_bulkbookupload_upcross_pop_action_callback', 'security' );
 		
 	// Get saved settings
-    $settings_table = $wpdb->prefix."wpbooklist_jre_mpextensionboilerplate_options";
+    $settings_table = $wpdb->prefix."wpbooklist_jre_bulkbookupload_options";
     $settings = $wpdb->get_row("SELECT * FROM $settings_table");
 
     echo $settings->defaultupsell.'–sep-seperator-sep–'.$settings->defaultcrosssell;
@@ -402,12 +473,12 @@ function wpbooklist_mpextensionboilerplate_upcross_pop_action_callback(){
 
 /*
 // For adding a book from the admin dashboard
-add_action( 'admin_footer', 'wpbooklist_mpextensionboilerplate_action_javascript' );
-add_action( 'wp_ajax_wpbooklist_mpextensionboilerplate_action', 'wpbooklist_mpextensionboilerplate_action_callback' );
-add_action( 'wp_ajax_nopriv_wpbooklist_mpextensionboilerplate_action', 'wpbooklist_mpextensionboilerplate_action_callback' );
+add_action( 'admin_footer', 'wpbooklist_bulkbookupload_action_javascript' );
+add_action( 'wp_ajax_wpbooklist_bulkbookupload_action', 'wpbooklist_bulkbookupload_action_callback' );
+add_action( 'wp_ajax_nopriv_wpbooklist_bulkbookupload_action', 'wpbooklist_bulkbookupload_action_callback' );
 
 
-function wpbooklist_mpextensionboilerplate_action_javascript() { 
+function wpbooklist_bulkbookupload_action_javascript() { 
 	?>
   	<script type="text/javascript" >
   	"use strict";
@@ -415,8 +486,8 @@ function wpbooklist_mpextensionboilerplate_action_javascript() {
 	  	$("#wpbooklist-admin-addbook-button").click(function(event){
 
 		  	var data = {
-				'action': 'wpbooklist_mpextensionboilerplate_action',
-				'security': '<?php echo wp_create_nonce( "wpbooklist_mpextensionboilerplate_action_callback" ); ?>',
+				'action': 'wpbooklist_bulkbookupload_action',
+				'security': '<?php echo wp_create_nonce( "wpbooklist_bulkbookupload_action_callback" ); ?>',
 			};
 			console.log(data);
 
@@ -443,9 +514,9 @@ function wpbooklist_mpextensionboilerplate_action_javascript() {
 }
 
 // Callback function for creating backups
-function wpbooklist_mpextensionboilerplate_action_callback(){
+function wpbooklist_bulkbookupload_action_callback(){
 	global $wpdb;
-	check_ajax_referer( 'wpbooklist_mpextensionboilerplate_action_callback', 'security' );
+	check_ajax_referer( 'wpbooklist_bulkbookupload_action_callback', 'security' );
 	//$var1 = filter_var($_POST['var'],FILTER_SANITIZE_STRING);
 	//$var2 = filter_var($_POST['var'],FILTER_SANITIZE_NUMBER_INT);
 	echo 'hi';
