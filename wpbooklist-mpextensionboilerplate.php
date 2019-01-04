@@ -78,8 +78,13 @@ global $wpdb;
 	// Root plugin folder directory.
 	define( 'MPEXTENSIONBOILERPLATE_ROOT_DIR', plugin_dir_path( __FILE__ ) );
 
-	// Root WordPress Plugin Directory.
-	define( 'MPEXTENSIONBOILERPLATE_ROOT_WP_PLUGINS_DIR', str_replace( '/wpbooklist-mpextensionboilerplate', '', plugin_dir_path( __FILE__ ) ) );
+	// Root WordPress Plugin Directory. The If is for taking into account the update process - a temp folder gets created when updating, which temporarily replaces the 'wpbooklist-bulkbookupload' folder.
+	if ( false !== stripos( plugin_dir_path( __FILE__ ) , '/wpbooklist-mpextensionboilerplate' ) ) { 
+		define( 'MPEXTENSIONBOILERPLATE_ROOT_WP_PLUGINS_DIR', str_replace( '/wpbooklist-mpextensionboilerplate', '', plugin_dir_path( __FILE__ ) ) );
+	} else {
+		$temp = explode( 'plugins/', plugin_dir_path( __FILE__ ) );
+		define( 'MPEXTENSIONBOILERPLATE_ROOT_WP_PLUGINS_DIR', $temp[0] . 'plugins/' );
+	}
 
 	// Root WPBL Dir.
 	if ( ! defined('MPEXTENSIONBOILERPLATE_ROOT_WPBL_DIR' ) ) {
@@ -201,7 +206,7 @@ global $wpdb;
 /* FUNCTIONS FOUND IN CLASS-WPBOOKLIST-GENERAL-FUNCTIONS.PHP THAT APPLY PLUGIN-WIDE */
 
 	// Function that adds in the License Key Submission form on this Extension's entry on the plugins page.
-	add_action( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $mpextensionboilerplate_general_functions, 'wpbooklist_mpextensionboilerplate_pluginspage_license_entry' ) );
+	add_action( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $mpextensionboilerplate_general_functions, 'wpbooklist_mpextensionboilerplate_pluginspage_nonce_entry' ) );
 
 	// Function that loads up the menu page entry for this Extension.
 	add_filter( 'wpbooklist_add_sub_menu', array( $mpextensionboilerplate_general_functions, 'wpbooklist_mpextensionboilerplate_submenu' ) );
@@ -227,7 +232,7 @@ global $wpdb;
 	// Function to add table names to the global $wpdb.
 	add_action( 'admin_footer', array( $mpextensionboilerplate_general_functions, 'wpbooklist_mpextensionboilerplate_register_table_name' ) );
 
-	// Function to run any code that is needed to modify the plugin between different versions.
+	// Function taht adds in any possible admin pointers
 	add_action( 'admin_footer', array( $mpextensionboilerplate_general_functions, 'wpbooklist_mpextensionboilerplate_admin_pointers_javascript' ) );
 
 	// Creates tables upon activation.

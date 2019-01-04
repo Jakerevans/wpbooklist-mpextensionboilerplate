@@ -51,10 +51,10 @@ if ( ! class_exists( 'WPBookList_MpExtensionBoilerplate_Update', false ) ) :
 
 			// Setup the updater.
 			$edd_updater = new WPBookList_MpExtensionBoilerplate_Update_Actual( EDD_SL_STORE_URL_MPEXTENSIONBOILERPLATE, MPEXTENSIONBOILERPLATE_ROOT_DIR . 'wpbooklist-mpextensionboilerplate.php', array(
-				'version' => '1.0.0',
+				'version' => WPBOOKLIST_MPEXTENSIONBOILERPLATE_VERSION_NUM,
 				'license' => $license_key,
 				'item_id' => EDD_SL_ITEM_ID_MPEXTENSIONBOILERPLATE,
-				'author'  => 'Pippin Williamson',
+				'author'  => 'Jake Evans',
 				'url'     => home_url(),
 				'beta'    => false,
 			) );
