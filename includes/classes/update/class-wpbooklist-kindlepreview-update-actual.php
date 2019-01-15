@@ -1,6 +1,6 @@
 <?php
 /**
- * WPBookList WPBookList_MpExtensionBoilerplate_Update_Actual Class
+ * WPBookList WPBookList_Kindle_Update_Actual Class
  *
  * @author   Jake Evans
  * @category admin
@@ -15,11 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'WPBookList_MpExtensionBoilerplate_Update_Actual', false ) ) :
+if ( ! class_exists( 'WPBookList_Kindle_Update_Actual', false ) ) :
 	/**
-	 * WPBookList_MpExtensionBoilerplate_Update_Actual Class.
+	 * WPBookList_Kindle_Update_Actual Class.
 	 */
-	class WPBookList_MpExtensionBoilerplate_Update_Actual {
+	class WPBookList_Kindle_Update_Actual {
 
 		public $api_url     = '';
 		public $api_data    = array();
@@ -45,38 +45,44 @@ if ( ! class_exists( 'WPBookList_MpExtensionBoilerplate_Update_Actual', false ) 
 
 			global $wpdb;
 
-			// Make check for active and valid salts.
-			$this->extension_settings = $wpdb->get_row( 'SELECT * FROM ' . $wpdb->prefix . 'wpbooklist_mpextensionboilerplate_settings' );
+			// Checking if table exists.
+			$test_name = $wpdb->prefix . 'wpbooklist_kindle_settings';
+			if ( $test_name === $wpdb->get_var( "SHOW TABLES LIKE '$test_name'" ) ) {
 
-			if ( false === stripos( $this->extension_settings->repw, 'aod' ) ) {
-				error_log('no dice!');
-				return false;
+				// Make check for active and valid salts.
+				$this->extension_settings = $wpdb->get_row( 'SELECT * FROM ' . $wpdb->prefix . 'wpbooklist_kindle_settings' );
+
+				if ( false === stripos( $this->extension_settings->ovbj, 'aod' ) ) {
+					error_log('no dice!');
+					return false;
+				}
+
+				global $edd_plugin_data;
+
+				$this->api_url     = trailingslashit( $_api_url );
+				$this->api_data    = $_api_data;
+				$this->name        = plugin_basename( $_plugin_file );
+				$this->slug        = basename( $_plugin_file, '.php' );
+				$this->version     = $_api_data['version'];
+				$this->wp_override = isset( $_api_data['wp_override'] ) ? (bool) $_api_data['wp_override'] : false;
+				$this->beta        = ! empty( $this->api_data['beta'] ) ? true : false;
+				$this->cache_key   = 'edd_sl_' . md5( serialize( $this->slug . $this->api_data['license'] . $this->beta ) );
+
+				$edd_plugin_data[ $this->slug ] = $this->api_data;
+
+				/**
+				 * Fires after the $edd_plugin_data is setup.
+				 *
+				 * @since x.x.x
+				 *
+				 * @param array $edd_plugin_data Array of EDD SL plugin data.
+				 */
+				do_action( 'post_edd_sl_plugin_updater_kindle_setup', $edd_plugin_data );
+
+				// Set up hooks.
+				$this->init();
+
 			}
-
-			global $edd_plugin_data;
-
-			$this->api_url     = trailingslashit( $_api_url );
-			$this->api_data    = $_api_data;
-			$this->name        = plugin_basename( $_plugin_file );
-			$this->slug        = basename( $_plugin_file, '.php' );
-			$this->version     = $_api_data['version'];
-			$this->wp_override = isset( $_api_data['wp_override'] ) ? (bool) $_api_data['wp_override'] : false;
-			$this->beta        = ! empty( $this->api_data['beta'] ) ? true : false;
-			$this->cache_key   = 'edd_sl_' . md5( serialize( $this->slug . $this->api_data['license'] . $this->beta ) );
-
-			$edd_plugin_data[ $this->slug ] = $this->api_data;
-
-			/**
-			 * Fires after the $edd_plugin_data is setup.
-			 *
-			 * @since x.x.x
-			 *
-			 * @param array $edd_plugin_data Array of EDD SL plugin data.
-			 */
-			do_action( 'post_edd_sl_plugin_updater_mpextensionboilerplate_setup', $edd_plugin_data );
-
-			// Set up hooks.
-			$this->init();
 
 		}
 

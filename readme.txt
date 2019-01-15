@@ -17,7 +17,7 @@ A Boilerplate Extension for WPBookList that creates a menu page and has it's own
 
 **Method** **1)** Simply drop this folder (unzipped) into your WordPress plugin directory (/wp-content/plugins).
 
-**Method** **2)** In the WordPress admin dashboard, click on ‘Plugins’ on the left-hand side, click on ‘Add New’ towards the very top of the page, click on ‘Upload Plugin’, and upload the ‘wpbooklist-mpextensionboilerplate.zip’ file you downloaded.
+**Method** **2)** In the WordPress admin dashboard, click on ‘Plugins’ on the left-hand side, click on ‘Add New’ towards the very top of the page, click on ‘Upload Plugin’, and upload the ‘wpbooklist-kindle.zip’ file you downloaded.
 
 == Screenshots ==
 

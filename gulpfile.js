@@ -22,10 +22,10 @@ var gulp   = require( 'gulp' ),
 	del    = require( 'del' );
 
 // Define file sources.
-var sassFrontendSource        = [ 'dev/scss/wpbooklist-mpextensionboilerplate-main-frontend.scss' ];
-var sassFrontendSourcePartial = [ 'dev/scss/_wpbooklist-mpextensionboilerplate-frontend-ui.scss' ];
-var sassBackendSource         = [ 'dev/scss/wpbooklist-mpextensionboilerplate-main-admin.scss' ];
-var sassBackendSourcePartial  = [ 'dev/scss/_wpbooklist-mpextensionboilerplate-backend-ui.scss' ];
+var sassFrontendSource        = [ 'dev/scss/wpbooklist-kindle-main-frontend.scss' ];
+var sassFrontendSourcePartial = [ 'dev/scss/_wpbooklist-kindle-frontend-ui.scss' ];
+var sassBackendSource         = [ 'dev/scss/wpbooklist-kindle-main-admin.scss' ];
+var sassBackendSourcePartial  = [ 'dev/scss/_wpbooklist-kindle-backend-ui.scss' ];
 var sassWatch                 = [ 'dev/scss/*.scss' ];
 var jsBackendSource           = [ 'dev/js/backend/*.js' ];
 var jsFrontendSource          = [ 'dev/js/frontend/*.js' ];
@@ -60,7 +60,7 @@ gulp.task( 'sassBackendSource', function() {
 // Task to concatenate and uglify js files
 gulp.task( 'concatAdminJs', function() {
 	gulp.src(jsBackendSource ) // use jsSources
-		.pipe(concat( 'wpbooklist_mpextensionboilerplate_admin.min.js' ) ) // Concat to a file named 'script.js'
+		.pipe(concat( 'wpbooklist_kindle_admin.min.js' ) ) // Concat to a file named 'script.js'
 		.pipe(uglify() ) // Uglify concatenated file
 		.pipe(gulp.dest( 'assets/js' ) ); // The destination for the concatenated and uglified file
 });
@@ -68,51 +68,51 @@ gulp.task( 'concatAdminJs', function() {
 // Task to concatenate and uglify js files
 gulp.task( 'concatFrontendJs', function() {
 	gulp.src(jsFrontendSource ) // use jsSources
-		.pipe(concat( 'wpbooklist_mpextensionboilerplate_frontend.min.js' ) ) // Concat to a file named 'script.js'
+		.pipe(concat( 'wpbooklist_kindle_frontend.min.js' ) ) // Concat to a file named 'script.js'
 		.pipe(uglify() ) // Uglify concatenated file
 		.pipe(gulp.dest( 'assets/js' ) ); // The destination for the concatenated and uglified file
 });
 
 gulp.task( 'copyassets', function () {
-	gulp.src([ './assets/**/*' ], {base: './'}).pipe(gulp.dest( '../wpbooklist_dist/WPBookList-Distribution' ) );
+	gulp.src([ './assets/**/*' ], {base: './'}).pipe(gulp.dest( '../wpbooklist-kindlepreview_dist' ) );
 });
 
 gulp.task( 'copyincludes', function () {
-	gulp.src([ './includes/**/*' ], {base: './'}).pipe(gulp.dest( '../wpbooklist_dist/WPBookList-Distribution' ) );
+	gulp.src([ './includes/**/*' ], {base: './'}).pipe(gulp.dest( '../wpbooklist-kindlepreview_dist' ) );
 });
 
 gulp.task( 'copyquotes', function () {
-	gulp.src([ './quotes/**/*' ], {base: './'}).pipe(gulp.dest( '../wpbooklist_dist/WPBookList-Distribution' ) );
+	gulp.src([ './quotes/**/*' ], {base: './'}).pipe(gulp.dest( '../wpbooklist-kindlepreview_dist' ) );
 });
 
 gulp.task( 'copyconfig', function () {
-	gulp.src([ './wpbooklistconfig.ini' ], {base: './'}).pipe(gulp.dest( '../wpbooklist_dist/WPBookList-Distribution' ) );
+	gulp.src([ './wpbooklistconfig.ini' ], {base: './'}).pipe(gulp.dest( '../wpbooklist-kindlepreview_dist' ) );
 });
 
 gulp.task( 'copyreadme', function () {
-	gulp.src([ './readme.txt' ], {base: './'}).pipe(gulp.dest( '../wpbooklist_dist/WPBookList-Distribution' ) );
+	gulp.src([ './readme.txt' ], {base: './'}).pipe(gulp.dest( '../wpbooklist-kindlepreview_dist' ) );
 });
 
 gulp.task( 'copylang', function () {
-	gulp.src([ './languages/**/*' ], {base: './'}).pipe(gulp.dest( '../wpbooklist_dist/WPBookList-Distribution' ) );
+	gulp.src([ './languages/**/*' ], {base: './'}).pipe(gulp.dest( '../wpbooklist-kindlepreview_dist' ) );
 });
 
 gulp.task( 'copymainfile', function () {
-	gulp.src([ './wpbooklist.php' ], {base: './'}).pipe(gulp.dest( '../wpbooklist_dist/WPBookList-Distribution' ) );
+	gulp.src([ './wpbooklist-kindlepreview.php' ], {base: './'}).pipe(gulp.dest( '../wpbooklist-kindlepreview_dist' ) );
 });
 
 gulp.task( 'zip', function () {
-	return gulp.src( '../wpbooklist_dist/WPBookList-Distribution/**' )
-		.pipe(zip( 'wpbooklist.zip' ) )
-		.pipe(gulp.dest( '../wpbooklist_dist/WPBookList-Distribution' ) );
+	return gulp.src( '../wpbooklist-kindlepreview_dist/**' )
+		.pipe(zip( 'wpbooklist-kindlepreview.zip' ) )
+		.pipe(gulp.dest( '../wpbooklist-kindlepreview_dist' ) );
 });
 
 gulp.task( 'cleanzip', function(cb) {
-	del([ '../wpbooklist_dist/WPBookList-Distribution/**/*' ], {force: true}, cb);
+	del([ '../wpbooklist-kindlepreview_dist/**/*' ], {force: true}, cb);
 });
 
 gulp.task( 'clean', function(cb) {
-	del([ '../wpbooklist_dist/WPBookList-Distribution/**/*', '!../wpbooklist_dist/WPBookList-Distribution/wpbooklist.zip' ], {force: true}, cb);
+	del([ '../wpbooklist-kindlepreview_dist/**/*', '!../wpbooklist-kindlepreview_dist/wpbooklist-kindlepreview.zip' ], {force: true}, cb);
 });
 
 // Task to watch for changes in our file sources
